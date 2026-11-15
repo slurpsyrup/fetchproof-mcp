@@ -1,0 +1,10 @@
+{
+  "name": "fetchproof-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "stdio MCP bridge to the Fetchproof API. Forwards each JSON-RPC message to POST /mcp.",
+  "bin": {
+    "fetchproof-mcp": "./bin.js"
+  }
+}
