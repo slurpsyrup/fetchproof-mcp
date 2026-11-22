@@ -32,12 +32,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/slurpsyrup/fetchproof-api.git",
-    "directory": "mcp"
+    "url": "git+https://github.com/slurpsyrup/fetchproof-mcp.git"
   },
-  "homepage": "https://docs.fetchproof.com/mcp",
   "bugs": {
-    "url": "https://github.com/slurpsyrup/fetchproof-api/issues"
+    "url": "https://github.com/slurpsyrup/fetchproof-mcp/issues"
   },
   "keywords": [
     "mcp",
@@ -49,5 +47,6 @@
     "race-results",
     "model-context-protocol"
   ],
-  "author": "LUXITAG LLC"
+  "author": "LUXITAG LLC",
+  "homepage": "https://docs.fetchproof.com/mcp"
 }
