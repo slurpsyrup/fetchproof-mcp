@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/slurpsyrup/fetchproof-mcp/main/assets/banner.png" alt="Fetchproof MCP" width="100%"></p>
+
 # @fetchproof/mcp
 
 [![Fetchproof MCP server](https://glama.ai/mcp/servers/slurpsyrup/fetchproof-mcp/badges/score.svg)](https://glama.ai/mcp/servers/slurpsyrup/fetchproof-mcp)
