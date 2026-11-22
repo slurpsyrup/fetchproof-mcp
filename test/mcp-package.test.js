@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
+import { cpSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { TERMS_BILLING } from "../src/billing.js";
@@ -234,6 +237,21 @@ test("help and version flags print to stdout and exit 0", async () => {
   const verOut = await readProc(ver);
   assert.equal(verOut.status, 0);
   assert.match(verOut.stdout, /^0\.1\.0\n$/);
+});
+
+test("sync-spec --check in a standalone checkout skips the monorepo OpenAPI and lets prepack succeed", () => {
+  const pkg = fileURLToPath(new URL("..", import.meta.url));
+  const dir = mkdtempSync(join(tmpdir(), "fp-mcp-pack-"));
+  cpSync(join(pkg, "scripts"), join(dir, "scripts"), { recursive: true });
+  cpSync(join(pkg, "src"), join(dir, "src"), { recursive: true });
+  cpSync(join(pkg, "openapi"), join(dir, "openapi"), { recursive: true });
+  writeFileSync(join(dir, "package.json"), readFileSync(join(pkg, "package.json")));
+  const check = spawnSync(process.execPath, [join(dir, "scripts/sync-spec.mjs"), "--check"], { encoding: "utf8" });
+  assert.equal(check.status, 0, check.stderr);
+  assert.match(check.stdout, /standalone checkout/);
+  const write = spawnSync(process.execPath, [join(dir, "scripts/sync-spec.mjs")], { encoding: "utf8" });
+  assert.notEqual(write.status, 0);
+  assert.match(write.stderr, /OpenAPI source not found/);
 });
 
 function readProc(child) {
