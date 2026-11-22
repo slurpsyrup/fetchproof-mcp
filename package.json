@@ -1,10 +1,53 @@
 {
-  "name": "fetchproof-mcp",
+  "name": "@fetchproof/mcp",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "type": "module",
-  "description": "stdio MCP bridge to the Fetchproof API. Forwards each JSON-RPC message to POST /mcp.",
+  "license": "MIT",
+  "description": "stdio MCP server for the Fetchproof public-data API. One tool per published operation (TikTok, Instagram, Facebook, YouTube, race results by bib, and the rest of the catalog). Users bring their own FETCHPROOF_API_KEY.",
   "bin": {
     "fetchproof-mcp": "./bin.js"
-  }
+  },
+  "files": [
+    "bin.js",
+    "src",
+    "openapi/tools.json",
+    "README.md",
+    "LICENSE",
+    "smithery.yaml",
+    "Dockerfile"
+  ],
+  "scripts": {
+    "start": "node bin.js",
+    "test": "node test/mcp-package.test.js",
+    "sync-spec": "node scripts/sync-spec.mjs",
+    "prepack": "node scripts/sync-spec.mjs --check",
+    "pack:dry": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slurpsyrup/fetchproof-api.git",
+    "directory": "mcp"
+  },
+  "homepage": "https://docs.fetchproof.com/mcp",
+  "bugs": {
+    "url": "https://github.com/slurpsyrup/fetchproof-api/issues"
+  },
+  "keywords": [
+    "mcp",
+    "fetchproof",
+    "tiktok",
+    "instagram",
+    "facebook",
+    "youtube",
+    "race-results",
+    "model-context-protocol"
+  ],
+  "author": "LUXITAG LLC"
 }

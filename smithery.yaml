@@ -1,0 +1,30 @@
+# Smithery configuration: https://smithery.ai/docs/build/project-config
+# The API key is optional at start so initialize and tools/list can run without
+# secrets. tools/call requires FETCHPROOF_API_KEY.
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      apiKey:
+        type: string
+        title: Fetchproof API key
+        description: Your Fetchproof API key from https://app.fetchproof.com. Required to call tools, not to list them.
+      baseUrl:
+        type: string
+        title: API base URL
+        description: Override the API host. Leave blank for production.
+        default: https://api.fetchproof.com
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@fetchproof/mcp"],
+      env: {
+        ...(config.apiKey ? { FETCHPROOF_API_KEY: config.apiKey } : {}),
+        ...(config.baseUrl ? { FETCHPROOF_BASE_URL: config.baseUrl } : {}),
+      }
+    })
+  exampleConfig:
+    apiKey: fp_your_key_here
+    baseUrl: https://api.fetchproof.com

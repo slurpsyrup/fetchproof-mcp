@@ -1,0 +1,5380 @@
+{
+  "source": "build/fetchproof.openapi.json",
+  "title": "Fetchproof API",
+  "version": "1.0.0",
+  "servers": [
+    {
+      "url": "https://api.fetchproof.com",
+      "description": "Production"
+    }
+  ],
+  "operations": [
+    {
+      "method": "get",
+      "path": "/v1/tiktok/profile",
+      "operationId": "v1-tiktok-profile",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Profile",
+      "description": "Scrapes a public TikTok profile",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "outcome": "absent"
+            },
+            "cost": 1
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok handle. You can pass handle or user_id.",
+          "example": "nasa"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok user id."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v3/tiktok/profile/videos",
+      "operationId": "v3-tiktok-profile-videos",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Profile Videos",
+      "description": "Get posts from a TikTok profile, newest first, 15 per page. Follow has_more and max_cursor to page back in time.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok handle",
+          "example": "nasa"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok handle or user id. Prefer handle."
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "latest (the default). popular is not supported yet and returns 400."
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility. The US feed is read."
+        },
+        {
+          "name": "include_pinned",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Include pinned posts; defaults to true. false excludes them. Keep unchanged while paginating."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true for a trimmed down version of the response"
+        },
+        {
+          "name": "max_cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor for the next (older) page. Use max_cursor from the previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v2/tiktok/video",
+      "operationId": "v2-tiktok-video",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Video Info",
+      "description": "Get a public TikTok video or slideshow by URL. Not-found does not prove deletion. Video files are in video.play_addr and video.bit_rate[].play_addr.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok video or photo/slideshow URL",
+          "example": "https://www.tiktok.com/@nasa/video/7708867568920038669"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility. The US page is read."
+        },
+        {
+          "name": "get_transcript",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set get_transcript=true for the video's native captions (WebVTT) at no extra cost. Missing captions return no transcript."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "download_media",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Not supported: download_media=true returns 400. Use the play_addr or download_addr URLs in the response."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/video/transcript",
+      "operationId": "v1-tiktok-video-transcript",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Transcript",
+      "description": "Get a TikTok video's own captions (TikTok's speech recognition or the creator's), as WebVTT and timed segments. No paid transcription. No captions in the language costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "transcript"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok video URL",
+          "example": "https://www.tiktok.com/@nbcnews/video/7709321258004909326"
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Two-letter language code, such as en or es. Defaults to the video's original captions."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/video/comments",
+      "operationId": "v1-tiktok-video-comments",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Comments",
+      "description": "Get comments on public TikTok videos or slideshows. Pages with comments cost 1 credit; empty pages cost 0. An empty page does not prove the post has no comments globally.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "comments"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok video URL",
+          "example": "https://www.tiktok.com/@nasa/video/7708867568920038669"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor to get more comments. Get 'cursor' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/video/comment/replies",
+      "operationId": "v1-tiktok-video-comment-replies",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Comment Replies",
+      "description": "Scrapes replies to a TikTok comment",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "comment_id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok comment ID. This is the cid from the comments endpoint.",
+          "example": "7708869768674460438"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok video URL. This is the url from the comments endpoint.",
+          "example": "https://www.tiktok.com/@nasa/video/7708867568920038669"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor to get more replies. Get 'cursor' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/user/following",
+      "operationId": "v1-tiktok-user-following",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Following",
+      "description": "Scrapes accounts that a TikTok user follows",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok handle",
+          "example": "nasa"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "min_time",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Used to paginate. Get 'min_time' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/user/followers",
+      "operationId": "v1-tiktok-user-followers",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Followers",
+      "description": "Scrapes followers of a TikTok account",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok handle",
+          "example": "nasa"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok handle or user id. Prefer handle."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "min_time",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Used to paginate. Get 'min_time' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/search/hashtag",
+      "operationId": "v1-tiktok-search-hashtag",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Search by Hashtag",
+      "description": "Search TikTok videos by hashtag. TikTok may return duplicate results.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "hashtag",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Hashtag to search for (without #)",
+          "example": "space"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility. The US feed is read."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor to get more videos. Get 'cursor' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/search/keyword",
+      "operationId": "v1-tiktok-search-keyword",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Search by Keyword (keyword pages)",
+      "description": "Get TikTok videos for a phrase from TikTok's public keyword page for it (tiktok.com/discover/<phrase>), 16 per page, as search_item_list of aweme_info objects (aweme_id, desc, create_time, author, statistics, video, music). The phrase is turned into the page's slug (\"how to tie a tie\" → how-to-tie-a-tie). Videos only: no accounts, hashtags or sounds. This covers only phrases TikTok has a keyword page for: most multi-word phrases do, while many single generic words (dogs, nfl, dance) have none. A phrase without a keyword page returns 404 at 0 credits; for a single word or a tag, use /v1/tiktok/search/hashtag. TikTok's own search does not answer signed-out visitors, so results follow the keyword page's ranking. date_posted and sort_by are accepted but ignored, and so is region (results are read as a US visitor). Paginate with cursor: pass back the cursor string the previous page returned; it is null on the last page.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The phrase to look up, as words (how to tie a tie) or as the keyword page's slug (how-to-tie-a-tie)",
+          "example": "how to tie a tie"
+        },
+        {
+          "name": "date_posted",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility but ignored: keyword pages cannot be filtered by date"
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility but ignored: results keep the keyword page's order"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility but ignored: results are read as a US visitor"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor string from the previous page's response (\"<offset>:<session id>\", such as 16:2026111707043796BD7F5020338800F556). It keeps later pages from repeating earlier ones; any other value returns 400"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/song",
+      "operationId": "v1-tiktok-song",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Get Song Details",
+      "description": "Get details for a TikTok sound or song.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "clipId",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "TikTok sound clip ID (clipId), not songId: the trailing number in a /music/ URL. The /music/ URL itself is accepted too.",
+          "example": "7417137492757612560"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/song/videos",
+      "operationId": "v1-tiktok-song-videos",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "TikToks using Song",
+      "description": "Get the TikToks using a song",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "clipId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "TikTok sound clip ID: the trailing number in a /music/ URL, such as 7370375686554782506.",
+          "example": "7417137492757612560"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "The cursor to get the next page of results."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/get-trending-feed",
+      "operationId": "v1-tiktok-get-trending-feed",
+      "tags": [
+        "tiktok"
+      ],
+      "summary": "Trending Feed",
+      "description": "Get the trending feed from TikTok.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "region",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Accepted for compatibility. The anonymous US For You feed is read.",
+          "example": "US"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to get a trimmed response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/product",
+      "operationId": "v1-tiktok-product",
+      "tags": [
+        "tiktok-shop"
+      ],
+      "summary": "Product Details",
+      "description": "Get details for a TikTok Shop product. US products only.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the product to get details for.",
+          "example": "https://www.tiktok.com/shop/pdp/goli-ashwagandha-gummies-with-vitamin-d-ksm-66-vegan-non-gmo/1729587769570529799"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only US is supported."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/shop/search",
+      "operationId": "v1-tiktok-shop-search",
+      "tags": [
+        "tiktok-shop"
+      ],
+      "summary": "Shop Search",
+      "description": "Products on TikTok Shop's US results page for a keyword (up to about 25). First page only. A keyword with no results page returns 404 at 0 credits, and an empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "products"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Keyword to search for, such as shoes or running shoes.",
+          "example": "shoes"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only US is supported."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Only 1 is accepted: later pages are not available."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/shop/products",
+      "operationId": "v1-tiktok-shop-products",
+      "tags": [
+        "tiktok-shop"
+      ],
+      "summary": "Shop Products",
+      "description": "A US TikTok Shop store's details (shopInfo) and its first page of products (up to 20) in the store's default order. First page only: cursor is always null, and has_more says whether the store has more. An empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "products"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The TikTok Shop store URL.",
+          "example": "https://www.tiktok.com/shop/store/goli-nutrition/7495794203056835079"
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only top, the store's default order, is accepted."
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only US is supported."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not accepted: only the first page is available, so responses carry cursor null."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/tiktok/shop/product/reviews",
+      "operationId": "v1-tiktok-shop-product-reviews",
+      "tags": [
+        "tiktok-shop"
+      ],
+      "summary": "Product Reviews",
+      "description": "Provide one of: url, product_id. The first page of a US TikTok Shop product's reviews (up to 5), with total_reviews and the star breakdown. First page only. A product with no reviews costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "product_reviews"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The product URL. Required if product_id is not provided."
+        },
+        {
+          "name": "product_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The product id. Required if url is not provided.",
+          "example": "1731578642912612516"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only US is supported."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Only 1 is accepted: later pages are not available."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/profile",
+      "operationId": "v1-instagram-profile",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Profile",
+      "description": "Get a public Instagram profile as a signed-out visitor sees it, in the web_profile_info shape under data.user: id, fbid, username, full name, biography, bio links, exact follower and following counts, verification, profile picture, and the profile grid's first 12 posts (edge_owner_to_timeline_media.edges). edge_owner_to_timeline_media.count is exact when Instagram shows the full number and null when it shows a rounded one such as 32K; /v1/instagram/profile/post-count returns the exact count. Business contact fields, related profiles and per-post like counts are not on the signed-out page and are omitted. Post dates (taken_at, taken_at_timestamp, created_at) are read from the media id, which encodes its upload time; they can differ from the time Instagram shows by a few minutes. Missing profiles fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The Instagram username, with or without @",
+          "example": "natgeo"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true for a trimmed response."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v2/instagram/user/posts",
+      "operationId": "v2-instagram-user-posts",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Posts",
+      "description": "Get the first 12 posts on a public profile's grid (reels, photos, videos and carousels): code, URL, media type, caption, display image and date, with the user. Only the first 12 are available signed out: next_max_id is always null and passing one returns 400; more_available says whether the profile has more. Like, comment and play counts are not in the signed-out grid; /v1/instagram/user/reels has counts for reels and /v1/instagram/post for any post. Post dates (taken_at, taken_at_timestamp, created_at) are read from the media id, which encodes its upload time; they can differ from the time Instagram shows by a few minutes.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The Instagram username, with or without @",
+          "example": "natgeo"
+        },
+        {
+          "name": "require_play_counts",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Accepted for compatibility and ignored: the signed-out grid has no counts."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true for a trimmed response."
+        },
+        {
+          "name": "next_max_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not supported: signed-out pagination is closed, so only the first 12 posts are returned. Passing one returns 400."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/user/reels",
+      "operationId": "v1-instagram-user-reels",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Reels",
+      "description": "Get the first 12 reels on a public profile's reels tab, each with play, like and comment counts, code, URL, cover image and date. Only the first 12 are available signed out: paging_info.max_id is always null and passing max_id returns 400. Captions are not on the reels tab; /v1/instagram/post has them. Requires handle: a lookup by user_id needs a login and returns 400. Post dates (taken_at, taken_at_timestamp, created_at) are read from the media id, which encodes its upload time; they can differ from the time Instagram shows by a few minutes.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not supported: a lookup by user_id needs a login. Pass handle; user_id alone returns 400."
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The Instagram username, with or without @ (required)",
+          "example": "natgeo"
+        },
+        {
+          "name": "require_play_counts",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to fail (at 0 credits) instead of returning a reel without a play count."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true for a trimmed response."
+        },
+        {
+          "name": "max_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not supported: signed-out pagination is closed, so only the first 12 reels are returned. Passing one returns 400."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/post",
+      "operationId": "v1-instagram-post",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Post/Reel Info",
+      "description": "Get a public Instagram post or reel by URL (/p/, /reel/, /reels/ or /tv/), as a signed-out visitor sees it: media URLs, caption, owner (with follower count), like and comment counts, duration, music, date and location. video_view_count is Instagram's older view count; for the plays Instagram shows on a reel, set include_play_count=true. Comment edges are empty (comments need a login). Private or removed posts fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the post or reel",
+          "example": "https://www.instagram.com/reel/DLDXI0fylTC/"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility. Instagram's public pages are read from the US."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true for a trimmed response."
+        },
+        {
+          "name": "download_media",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Not supported: download_media=true returns 400. Use video_url or display_url in the response."
+        },
+        {
+          "name": "include_play_count",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to add play_count (also as video_play_count) for a reel: the plays Instagram shows, the same number as /v1/instagram/user/reels. Read from the owner's 12 newest reels; null for older ones."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/search/popular",
+      "operationId": "v1-instagram-search-popular",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Popular Search",
+      "description": "Get Instagram's public Popular page for a topic (instagram.com/popular/<topic>/), as a signed-out visitor sees it: the page title, its rounded reel count (total_media_count, as Instagram rounds it), Instagram's topic summary with sources, related search terms, and the first 12 posts with play counts and creators. The query is turned into the page's path (\"best pizza in chicago\" → /popular/best-pizza-in-chicago/). Instagram has Popular pages only for some topics: a topic without one returns 404 at 0 credits. Only the first page is available signed out: cursor is always null and passing one returns 400.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The topic to look up, as words (best pizza in chicago) or as the page's slug (best-pizza-in-chicago)",
+          "example": "best pizza in chicago"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not supported: only the first page is available signed out. Passing one returns 400."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/reels/trending",
+      "operationId": "v1-instagram-reels-trending",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Trending Reels",
+      "description": "Get the reels Instagram's signed-out Reels feed (instagram.com/reels/) is showing right now, usually 8: shortcode, URL, caption, publication date (taken_at as ISO 8601, taken_at_timestamp in seconds), video and image URLs, like and comment counts, audio info and the creator. This is Instagram's own signed-out feed, not a ranked global chart, and repeated calls can overlap. Play counts are not in this feed: play_count is null (use /v1/instagram/post for a reel's views). Pagination is not available signed out.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": []
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/user/highlights",
+      "operationId": "v1-instagram-user-highlights",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Story Highlights",
+      "description": "List the story highlights a signed-out visitor sees on a profile: id, title, cropped cover URL and owner. Instagram shows signed-out visitors only some of an account's highlights. cover_media.thumbnail_src is always null; use cover_media_cropped_thumbnail.url. Pass the id to /v1/instagram/user/highlight/detail for the stories. Requires handle: a lookup by user_id needs a login and returns 400.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Not supported: a lookup by user_id needs a login. Pass handle; user_id alone returns 400."
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The Instagram username, with or without @ (required)",
+          "example": "natgeo"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/user/highlight/detail",
+      "operationId": "v1-instagram-user-highlight-detail",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Highlights Details",
+      "description": "Get a story highlight's stories by highlight id (the id from /v1/instagram/user/highlights): id, user, latest_reel_media and items, each with image_versions2 and, for videos, video_versions. Ids past 2^53 (pk) are strings. The title and cover are not in this public call; /v1/instagram/user/highlights has them. Highlights that need a login fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The highlight id, with or without the highlight: prefix",
+          "example": "18067016518767507"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/profile/post-count",
+      "operationId": "v1-instagram-profile-post-count",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Profile Post Count",
+      "description": "Get a public profile's post count. It is exact when the profile's embed or page shows the full number (is_estimated false). When Instagram shows only a rounded value such as 1.2M, set allow_estimated=true to get the scaled number with is_estimated true; without it the call returns an uncharged 422. Missing profiles fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The Instagram username, with or without @",
+          "example": "natgeo"
+        },
+        {
+          "name": "allow_estimated",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set to true to accept a rounded count (is_estimated true) when the exact one is not shown. Defaults to false, which returns an uncharged 422 in that case."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/instagram/user/embed",
+      "operationId": "v1-instagram-user-embed",
+      "tags": [
+        "instagram"
+      ],
+      "summary": "Embed HTML",
+      "description": "Get the HTML of an Instagram profile's embed widget (instagram.com/<handle>/embed/). Profiles that are private, missing or not embeddable fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The Instagram username, with or without @",
+          "example": "natgeo"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel",
+      "operationId": "v1-youtube-channel",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Details",
+      "description": "Provide one of: channelId, handle, url. Get YouTube channel details and stats by channelId, handle, or URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID. Provide channelId, handle, or url."
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle. Provide channelId, handle, or url.",
+          "example": "NASA"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel URL. Provide channelId, handle, or url."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel-videos",
+      "operationId": "v1-youtube-channel-videos",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Videos",
+      "description": "Provide one of: channelId, handle. Get paginated videos from a YouTube channel by channelId or handle. Paid-promotion filtering is not supported; use /v1/youtube/video and its isPaidPromotion field for each video's status.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID"
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle",
+          "example": "NASA"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by latest or popular",
+          "example": "latest"
+        },
+        {
+          "name": "includeExtras",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Include like/comment counts and descriptions. Increases errors and may be deprecated; use /v1/youtube/video for full details."
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel/search",
+      "operationId": "v1-youtube-channel-search",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Search",
+      "description": "Provide one of: handle, continuationToken. Search within one YouTube channel by keyword. Returns videos, Shorts, live streams and playlists. Costs 1 credit per page, even with no matches.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "YouTube channel handle, with or without @.",
+          "example": "NASA"
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Keywords to search within this channel.",
+          "example": "mars"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Token from the previous response. Keep the same handle and query; stop when the token is null."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel/playlists",
+      "operationId": "v1-youtube-channel-playlists",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Playlists",
+      "description": "Provide one of: channelId, handle, continuationToken. Get playlists from a YouTube channel. Can pass channelId or handle.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID"
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle",
+          "example": "NASA"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel/lives",
+      "operationId": "v1-youtube-channel-lives",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Lives",
+      "description": "Provide one of: channelId, handle, continuationToken. Get live streams and past streams from a YouTube channel. Can pass channelId or handle.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID"
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle",
+          "example": "NASA"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel/community-posts",
+      "operationId": "v1-youtube-channel-community-posts",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Community Posts",
+      "description": "Provide one of: channelId, handle, continuationToken. Get community posts from a YouTube channel. Can pass channelId or handle.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID"
+        },
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle",
+          "example": "NASA"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/channel/shorts",
+      "operationId": "v1-youtube-channel-shorts",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Channel Shorts",
+      "description": "Provide one of: channelId, handle, continuationToken. Get channel Shorts. publishDate is an ISO 8601 timestamp with an offset when available, otherwise null; date-only values are not returned.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel handle. Provide handle or channelId.",
+          "example": "NASA"
+        },
+        {
+          "name": "channelId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "YouTube channel ID. Provide channelId or handle."
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by newest or popular",
+          "example": "newest"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/video",
+      "operationId": "v1-youtube-video",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Video/Short Details",
+      "description": "Get YouTube video or Short details, description cards, AI disclosures, owner/uploader identities, paid-promotion status and replay heatmaps. Age-restricted videos return 403. No hosted video downloads.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "YouTube video or short URL",
+          "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Preferred two-letter response language, such as en, es, or fr. Sets Accept-Language; YouTube may ignore it."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/video/transcript",
+      "operationId": "v1-youtube-video-transcript",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Transcript",
+      "description": "Get publicly available captions or a transcript from a YouTube video or Short",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "transcript"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "YouTube video or short URL",
+          "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Caption language, e.g. en or en-US; original_audio=true overrides it. Omit for automatic selection. No matching requested or identified original-language captions returns null at no charge."
+        },
+        {
+          "name": "original_audio",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for original-language captions only, overriding language. Unidentified original audio or missing captions returns null at no charge. A returned transcript costs 1 credit; no extra lookup."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/video/sponsors",
+      "operationId": "v1-youtube-video-sponsors",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Video Sponsors",
+      "description": "Experimental: infer possible video sponsors from public evidence, not an official YouTube sponsor field.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "YouTube video or short URL",
+          "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Two-letter language code for transcript lookup, such as en, es, or fr."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/search",
+      "operationId": "v1-youtube-search",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Search",
+      "description": "Search YouTube videos, channels, playlists, Shorts and live streams.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Search query. Use intitle: for stricter title matching, e.g. intitle:\"Foursquare Swarm\". YouTube may broaden quoted queries when no fresh exact matches exist.",
+          "example": "NASA"
+        },
+        {
+          "name": "uploadDate",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Upload date"
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Type of content to search for"
+        },
+        {
+          "name": "duration",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Duration of the video. Only applies to videos (not shorts)."
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Two-letter country code for the proxy location."
+        },
+        {
+          "name": "includeExtras",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Include like/comment counts and descriptions; slows the response. Use /v1/youtube/video for full details."
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/search/typeahead",
+      "operationId": "v1-youtube-search-typeahead",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Search Typeahead",
+      "description": "Get the live autocomplete suggestions shown in YouTube's search dropdown.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Partial or complete YouTube search query",
+          "example": "NASA"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/search/hashtag",
+      "operationId": "v1-youtube-search-hashtag",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Search by Hashtag",
+      "description": "Provide one of: hashtag, continuationToken. Search YouTube and get matching videos, channels, and playlists",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "hashtag",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Hashtag to search for",
+          "example": "nasa"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Search for all types of content or only shorts"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/video/comments",
+      "operationId": "v1-youtube-video-comments",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Comments",
+      "description": "Provide one of: url, continuationToken. Get comments from a video. Can only get 1k top comments and about 7k new comments.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "YouTube video URL",
+          "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Order of comments",
+          "example": "top"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use continuationToken from the previous response to get the next page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/video/comment/replies",
+      "operationId": "v1-youtube-video-comment-replies",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Comment Replies",
+      "description": "Get replies to a specific comment on a YouTube video.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Use repliesContinuationToken from Comments, then continuationToken from each replies response to paginate.",
+          "example": "Eg0SC2RRdzR3OVdnWGNRGAYygwEaUBIaVWd3MTBiU2x1Q0RTWk1JeFVTQjRBYUFCQWciAggAKhhVQ3VBWEZrZ3N3MUw3eGFDZm5kNUpKT3cyC2RRdzR3OVdnWGNRQAFICoIBAggBQi9jb21tZW50LXJlcGxpZXMtaXRlbS1VZ3cxMGJTbHVDRFNaTUl4VVNCNEFhQUJBZw%3D%3D"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/shorts/trending",
+      "operationId": "v1-youtube-shorts-trending",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Trending Shorts",
+      "description": "Call it with no arguments. Get about 48 trending Shorts per request. Repeated requests can return new Shorts.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": []
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/playlist",
+      "operationId": "v1-youtube-playlist",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Playlist",
+      "description": "Provide one of: playlist_id, continuationToken. Get a paginated list of videos in a YouTube playlist",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "playlist_id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The ID of the YouTube playlist. In the YouTube URL it will be the 'list' parameter.",
+          "example": "PLF98rxtslw6s"
+        },
+        {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/youtube/community-post",
+      "operationId": "v1-youtube-community-post",
+      "tags": [
+        "youtube"
+      ],
+      "summary": "Community Post Details",
+      "description": "Get the details of a community post",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the YouTube community post to get",
+          "example": "https://www.youtube.com/post/Ugkx0X33g-nAj6FyciU8R9pJUCrPERrtPBJE"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/profile",
+      "operationId": "v1-facebook-profile",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Profile",
+      "description": "Get a public Facebook page's profile, as a signed-out visitor sees it: id, name, adLibrary.pageId (the id the Ad Library uses), exact followerCount and talkingAboutCount, category, intro, address, phone, email, website, services, price range, rating, and the cover and profile photos. adLibrary.adStatus, creationDate and businessHours are not on the signed-out page and are omitted; likeCount appears only when the page shows likes. Pages that Facebook only shows to signed-in visitors fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the public Facebook page (facebook.com/<name>, profile.php?id= or /people/<name>/<id>)",
+          "example": "https://www.facebook.com/mantraindianfolsom"
+        },
+        {
+          "name": "get_business_hours",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility and ignored: opening hours are not on the signed-out page."
+        },
+        {
+          "name": "include_gated_profile",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Accepted for compatibility and ignored: gated and age-restricted pages need a login and fail at 0 credits."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/profile/posts",
+      "operationId": "v1-facebook-profile-posts",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Profile Posts",
+      "description": "Get a public Facebook page's timeline posts, 3 per page, newest first, as a signed-out visitor sees them: id, text, url, author, reactionCount, commentCount, shareCount, publishTime, and SD/HD video URLs with a thumbnail for videos and reels. Provide url or pageId (the id from /v1/facebook/profile). topComments is always empty and videoViewCount is null: the signed-out feed does not carry them. Pass cursor from a response for the next page; it remembers the page, so url and pageId can be left out.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The URL of the public Facebook page",
+          "example": "https://www.facebook.com/pacemorby"
+        },
+        {
+          "name": "pageId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The page's numeric id (id from /v1/facebook/profile). Saves reading the page first."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor from the previous response, to get the next 3 posts"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/profile/events",
+      "operationId": "v1-facebook-profile-events",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Profile Events",
+      "description": "Get a public Facebook page's upcoming events, 8 per page, in the order Facebook lists them. total_count is the page's upcoming-event count. Pass cursor from a response, with the same url, for the next page.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the public Facebook page",
+          "example": "https://www.facebook.com/firstavenue"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor from the previous response, to get the next page of events"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/post",
+      "operationId": "v1-facebook-post",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Post",
+      "description": "Get a public Facebook reel or video by URL (/reel/, /watch?v=, /<page>/videos/ and share links). Returns post_id, like_count (all reactions), comment_count, share_count, description, creation_time, the video's SD and HD URLs, author and sound. view_count is included only when the public page shows it; logged-out reel pages usually do not. shared_post_id and shared_post_url are null. Posts that Facebook only shows to signed-in visitors fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the reel or video",
+          "example": "https://www.facebook.com/reel/1535656380759655"
+        },
+        {
+          "name": "allow_long_transcription",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Accepted for compatibility and ignored. Transcripts are Facebook's own captions, never AI, at no extra cost."
+        },
+        {
+          "name": "get_transcript",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set get_transcript=true for the reel's own captions (SRT) at no extra cost. Missing captions return transcript: null."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/post/transcript",
+      "operationId": "v1-facebook-post-transcript",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Transcript",
+      "description": "Get a public Facebook reel or video's own captions as text and timed segments. No paid transcription. No captions costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "transcript"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Facebook reel or video URL",
+          "example": "https://www.facebook.com/reel/1535656380759655"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user",
+      "operationId": "v1-github-user",
+      "tags": [
+        "github"
+      ],
+      "summary": "User",
+      "description": "Provide one of: handle, url. Get public GitHub user details for a user. Pass username, handle, or url.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub username/handle of the user you want the details for",
+          "example": "torvalds"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub user URL, e.g. https://github.com/torvalds."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/repositories",
+      "operationId": "v1-github-user-repositories",
+      "tags": [
+        "github"
+      ],
+      "summary": "Repositories",
+      "description": "Provide one of: handle, url. Get public repositories for a GitHub user. Supports pagination and GitHub's repo sorting options.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub username/handle of the user you want the repositories for",
+          "example": "torvalds"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub user URL, e.g. https://github.com/kentcdodds."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Repository type. Defaults to owner. GitHub also supports all and member.",
+          "example": "owner"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by created, updated, pushed, or full_name. Defaults to updated.",
+          "example": "updated"
+        },
+        {
+          "name": "direction",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort direction: ascending or descending."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor from the previous response. Defaults to 1."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/pull-requests",
+      "operationId": "v1-github-user-pull-requests",
+      "tags": [
+        "github"
+      ],
+      "summary": "Pull Requests",
+      "description": "Get public pull requests authored by a GitHub user. Filter by created date with since and until.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "GitHub username/handle of the user you want pull requests for",
+          "example": "torvalds"
+        },
+        {
+          "name": "since",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only return pull requests created on or after this date. Use YYYY-MM-DD."
+        },
+        {
+          "name": "until",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only return pull requests created on or before this date. Use YYYY-MM-DD."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor from the previous response. Defaults to 1."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/activity",
+      "operationId": "v1-github-user-activity",
+      "tags": [
+        "github"
+      ],
+      "summary": "Activity",
+      "description": "Provide one of: handle, url. Get public GitHub profile contribution activity for a user. Defaults to the current year and returns one month at a time.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub handle",
+          "example": "torvalds"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub user URL, e.g. https://github.com/kentcdodds."
+        },
+        {
+          "name": "year",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "When provided, returns profile contribution activity for that year. Defaults to the current year."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor from the previous response. Pages backward by month through the selected year."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/followers",
+      "operationId": "v1-github-user-followers",
+      "tags": [
+        "github"
+      ],
+      "summary": "Followers",
+      "description": "Provide one of: handle, url. Get public followers for a GitHub user. Pass username, handle, or url.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub username/handle of the user you want the followers for",
+          "example": "torvalds"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub user URL, e.g. https://github.com/torvalds."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor from the previous response. Defaults to 1."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/following",
+      "operationId": "v1-github-user-following",
+      "tags": [
+        "github"
+      ],
+      "summary": "Following",
+      "description": "Provide one of: handle, url. Get public accounts a GitHub user follows.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub handle",
+          "example": "gaearon"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub profile URL"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor from the previous response. Defaults to 1."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/user/contributions",
+      "operationId": "v1-github-user-contributions",
+      "tags": [
+        "github"
+      ],
+      "summary": "Contributions",
+      "description": "Provide one of: handle, url. Get a user's GitHub contribution graph for a year.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub handle",
+          "example": "torvalds"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "GitHub profile URL"
+        },
+        {
+          "name": "year",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Contribution graph year. Defaults to the current year."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/repository",
+      "operationId": "v1-github-repository",
+      "tags": [
+        "github"
+      ],
+      "summary": "Repository",
+      "description": "Get public metadata for one GitHub repository.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "GitHub repository URL",
+          "example": "https://github.com/torvalds/linux"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/trending/repositories",
+      "operationId": "v1-github-trending-repositories",
+      "tags": [
+        "github"
+      ],
+      "summary": "Trending Repositories",
+      "description": "Get GitHub trending repositories. Supports language, spoken_language_code, and daily/weekly/monthly range filters.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Optional coding language, e.g. javascript, python, or go.",
+          "example": "javascript"
+        },
+        {
+          "name": "since",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Trending range: daily, weekly, or monthly. Defaults to daily.",
+          "example": "weekly"
+        },
+        {
+          "name": "spoken_language_code",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Optional spoken language code filter, e.g. en."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/github/trending/developers",
+      "operationId": "v1-github-trending-developers",
+      "tags": [
+        "github"
+      ],
+      "summary": "Trending Developers",
+      "description": "Get GitHub trending developers. Supports language and daily/weekly/monthly range filters.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Optional trending coding language, e.g. javascript, python, or go.",
+          "example": "javascript"
+        },
+        {
+          "name": "since",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Trending range: daily, weekly, or monthly. Defaults to daily.",
+          "example": "weekly"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/event/details",
+      "operationId": "v1-facebook-event-details",
+      "tags": [
+        "facebook"
+      ],
+      "summary": "Event Details",
+      "description": "Get a public Facebook event by its URL or id: name, description, start and end time, place, address, coordinates, hosts, attendance and interested counts. going_count is not on the logged-out page and is omitted. Deleted and private events redirect to a login and fail at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The ID of the event",
+          "example": "1705359837159507"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The URL of the event, e.g. https://www.facebook.com/events/1705359837159507/"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/adLibrary/ad",
+      "operationId": "v1-facebook-adLibrary-ad",
+      "tags": [
+        "facebookAdLibrary"
+      ],
+      "summary": "Ad Details",
+      "description": "Get one Facebook Ad Library ad by its Library ID or ads/library/?id= URL, active or inactive. Returns adArchiveID, pageName, isActive, startDate, endDate, publisherPlatform and the snapshot (body, cards, images, videos, display_format, link_url, cta_text), with the advertiser's pageInfo and, for ads shown in the EU, aaa_info audience data. An ad no longer in the library is a 404. Ids are strings.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Facebook Ad Id",
+          "example": "1016451784037642"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Facebook Ad Library URL, e.g. https://www.facebook.com/ads/library/?id=1016451784037642"
+        },
+        {
+          "name": "allow_long_transcription",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Accepted for compatibility and ignored."
+        },
+        {
+          "name": "get_transcript",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Not supported: get_transcript=true returns 400. Use the video URLs in snapshot.videos."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/adLibrary/search/ads",
+      "operationId": "v1-facebook-adLibrary-search-ads",
+      "tags": [
+        "facebookAdLibrary"
+      ],
+      "summary": "Search",
+      "description": "Search the Meta Ad Library by keyword, with the Ad Library's own filters: country, language, status, media type, ad type, exact phrase, sort, and an impressions date range. Returns searchResults (one card per creative group, as the Ad Library shows them: ad_archive_id, page_name, is_active, publisher_platform, collation_count, start/end dates and a snapshot with body text, images, videos, cards and cta_text), searchResultsCount and a cursor. Page 1 holds up to 30 results; later pages about 10. To page, send the same filters with cursor. A cursor from page 2 on is tied to a short-lived upstream session: if it has expired, the response says so and you start again without a cursor. Use GET normally; for long cursors, use POST with the same parameters in the JSON body. Ids are strings.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Keyword to search for (up to 200 characters)",
+          "example": "running shoes"
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by impressions (high to low), or Most Recent (relevancy_monthly_grouped). Defaults to impressions."
+        },
+        {
+          "name": "search_type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "keyword_unordered (default) matches the words in any order; keyword_exact_phrase matches the phrase as written."
+        },
+        {
+          "name": "ad_type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Search for all ads or only political and issue ads"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Where Facebook showed the ad: one two-letter country code, such as US, or ALL (default). Results can include advertisers from other countries whose ads reached it."
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads in this language: a two-letter code such as EN, ES or FR."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Status of the ad. Defaults to ACTIVE."
+        },
+        {
+          "name": "media_type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Ad media type. Defaults to ALL. MEME means an image with text."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads with impressions on or after this date, YYYY-MM-DD."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads with impressions on or before this date, YYYY-MM-DD."
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor from the previous page. Send it with the same filters."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/adLibrary/company/ads",
+      "operationId": "v1-facebook-adLibrary-company-ads",
+      "tags": [
+        "facebookAdLibrary"
+      ],
+      "summary": "Company Ads",
+      "description": "Provide one of: pageId, companyName. A company's ads from its Ad Library page, with the same filters as ad search. Returns results and a cursor. An empty page costs 0 credits, and an unknown companyName is a 404 at 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "results"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "pageId",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Ad Library page id, from /v1/facebook/adLibrary/search/companies. Provide pageId or companyName.",
+          "example": "15087023444"
+        },
+        {
+          "name": "companyName",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Company name, resolved to its Ad Library page (exact name first, else the top match). Provide companyName or pageId."
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Where Facebook showed the ad: one two-letter country code, such as US, or ALL (default). Results can include advertisers from other countries whose ads reached it."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Status of the ad. Defaults to ACTIVE."
+        },
+        {
+          "name": "media_type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Ad media type. Defaults to ALL. MEME means an image with text."
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads in this language: a two-letter code such as EN, ES or FR."
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by impressions (high to low), or Most Recent (relevancy_monthly_grouped). Defaults to impressions."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads with impressions on or after this date, YYYY-MM-DD."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only ads with impressions on or before this date, YYYY-MM-DD."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor from the previous page. Send it with the same filters."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/facebook/adLibrary/search/companies",
+      "operationId": "v1-facebook-adLibrary-search-companies",
+      "tags": [
+        "facebookAdLibrary"
+      ],
+      "summary": "Search for Companies",
+      "description": "Search Ad Library pages by name and get each page id for /v1/facebook/adLibrary/company/ads, with likes and Instagram details. An empty result costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "searchResults"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Company or page name to search for (up to 200 characters).",
+          "example": "nike"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/google/company/ads",
+      "operationId": "v1-google-company-ads",
+      "tags": [
+        "googleAdLibrary"
+      ],
+      "summary": "Company Ads",
+      "description": "Provide one of: advertiser_id, domain. Get public company ads with dates when available (1 credit). Set get_ad_details=true for full details (25 credits). firstShown can be null in detail responses even when the default list has it.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "param": "get_ad_details"
+            },
+            "cost": 25
+          },
+          {
+            "when": {
+              "empty": "ads"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The domain of the company",
+          "example": "nike.com"
+        },
+        {
+          "name": "advertiser_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The advertiser id of the company"
+        },
+        {
+          "name": "topic",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Topic to search for. Political searches also require region, such as US or AU."
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The region to search for. Defaults to anywhere"
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Start date to search for. Format: YYYY-MM-DD"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "End date to search for. Format: YYYY-MM-DD"
+        },
+        {
+          "name": "platform",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Platform to search for."
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Ad format to search for."
+        },
+        {
+          "name": "get_ad_details",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Set true to include ad details for 25 credits per request; otherwise IDs only for 1 credit."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor to paginate through results"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/google/adLibrary/advertisers/search",
+      "operationId": "v1-google-adLibrary-advertisers-search",
+      "tags": [
+        "googleAdLibrary"
+      ],
+      "summary": "Advertiser Search",
+      "description": "Search the Google Ad Transparency Library for advertisers to get their advertiser id. Pass region for non-US advertisers, like AU or CA.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "nonEmpty": "websites"
+            },
+            "cost": 1
+          },
+          {
+            "when": {
+              "nonEmpty": "advertisers"
+            },
+            "cost": 1
+          },
+          {
+            "when": {
+              "empty": "advertisers"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The query to search for",
+          "example": "Nike"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "2-letter country code to search in. Defaults to US when omitted."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitter/profile",
+      "operationId": "v1-twitter-profile",
+      "tags": [
+        "twitter"
+      ],
+      "summary": "Profile",
+      "description": "Get Twitter profile information including stats and metadata",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitter handle",
+          "example": "NASA"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitter/user-tweets",
+      "operationId": "v1-twitter-user-tweets",
+      "tags": [
+        "twitter"
+      ],
+      "summary": "User Tweets",
+      "description": "Get up to 100 popular tweets from a user's public profile, not their latest tweets.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "tweets"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitter handle",
+          "example": "NASA"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitter/tweet",
+      "operationId": "v1-twitter-tweet",
+      "tags": [
+        "twitter"
+      ],
+      "summary": "Tweet Details",
+      "description": "Get detailed information about a specific tweet including engagement",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Tweet URL",
+          "example": "https://x.com/jack/status/20"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/subreddit/details",
+      "operationId": "v1-reddit-subreddit-details",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Subreddit Details",
+      "description": "Provide one of: subreddit, url. Get details about a subreddit. Pass a subreddit name or URL to the subreddit. Subscriber counts are not available; weekly activity counts are different metrics.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "subreddit",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Case-sensitive subreddit name, e.g. AskReddit, not askreddit.",
+          "example": "nasa"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Subreddit URL"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/subreddit",
+      "operationId": "v1-reddit-subreddit",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Subreddit Posts",
+      "description": "Provide one of: subreddit, url. Get recent posts from a subreddit with engagement metrics",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "subreddit",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Subreddit name",
+          "example": "nasa"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Timeframe to get posts from"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort order",
+          "example": "hot"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "After to get more posts. Get 'after' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/subreddit/search",
+      "operationId": "v1-reddit-subreddit-search",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Subreddit Search",
+      "description": "Search within a subreddit for posts, comments, or media matching a query",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "subreddit",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Subreddit name (e.g. 'Fitness', not 'r/Fitness' or a full URL)",
+          "example": "nasa"
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Search query to find matching content"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort order. For posts/media: relevance, hot, top, new, comments. For comments: relevance, top, new"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Timeframe to filter results"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor to get more results. Get 'cursor' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/post",
+      "operationId": "v1-reddit-post",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Post",
+      "description": "Get information from a Reddit post without comments",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Reddit post URL",
+          "example": "https://www.reddit.com/r/IAmA/comments/z1c9z/i_am_barack_obama_president_of_the_united_states/"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/post/comments",
+      "operationId": "v1-reddit-post-comments",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Post Comments",
+      "description": "Get Reddit post details and comments. Paginate with one opaque cursor; no cursor batching. For long cursors, use POST with the same JSON-body parameters. Author flair is unavailable.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "comments"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Reddit post URL",
+          "example": "https://www.reddit.com/r/IAmA/comments/z1c9z/i_am_barack_obama_president_of_the_united_states/"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors."
+        }
+      ]
+    },
+    {
+      "method": "post",
+      "path": "/v1/reddit/post/comments",
+      "operationId": "v1-reddit-post-comments",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Post Comments",
+      "description": "Get Reddit post details and comments. Paginate with one opaque cursor; no cursor batching. For long cursors, use POST with the same JSON-body parameters. Author flair is unavailable.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "comments"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Reddit post URL",
+          "example": "https://www.reddit.com/r/IAmA/comments/z1c9z/i_am_barack_obama_president_of_the_united_states/"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/post/transcript",
+      "operationId": "v1-reddit-post-transcript",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Post Transcript",
+      "description": "Get the transcript from a Reddit video post",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "transcript"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Reddit post URL or direct v.redd.it video URL",
+          "example": "https://www.reddit.com/r/videos/comments/1xdjd6f/reporter_amy_actons_stepfather_was_indicted_for/"
+        },
+        {
+          "name": "language",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Two-letter language code. Defaults to en."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/reddit/search",
+      "operationId": "v1-reddit-search",
+      "tags": [
+        "reddit"
+      ],
+      "summary": "Search",
+      "description": "Search Reddit for posts or comments. Anonymous search looks in one subreddit: pass subreddit, or a single-word query, which is also used as the subreddit. sort and timeframe apply where the archive supports them. An empty page costs 0 credits. Search does not return upvote ratios. Use /v1/reddit/post for a post's upvote_ratio.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "posts"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Search query",
+          "example": "mars"
+        },
+        {
+          "name": "filter",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Search posts or comments"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by. Comment search supports relevance, new, and top; comment_count is for post search only.",
+          "example": "new"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Post search timeframe",
+          "example": "year"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Used to paginate to next page"
+        },
+        {
+          "name": "subreddit",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Limit the search to this subreddit.",
+          "example": "nasa"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/bluesky/profile",
+      "operationId": "v1-bluesky-profile",
+      "tags": [
+        "bluesky"
+      ],
+      "summary": "Profile",
+      "description": "Provide one of: handle, user_id. Get Bluesky profile info",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Bluesky handle",
+          "example": "bsky.app"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/bluesky/user/posts",
+      "operationId": "v1-bluesky-user-posts",
+      "tags": [
+        "bluesky"
+      ],
+      "summary": "Posts",
+      "description": "Provide one of: handle, user_id. Get Bluesky user posts. Use user_id for faster response times.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Bluesky handle",
+          "example": "bsky.app"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Bluesky user DID."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/bluesky/post",
+      "operationId": "v1-bluesky-post",
+      "tags": [
+        "bluesky"
+      ],
+      "summary": "Post",
+      "description": "Get Bluesky post",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Bluesky post URL",
+          "example": "https://bsky.app/profile/bsky.app/post/3n27yge3hys24"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/pinterest/search",
+      "operationId": "v1-pinterest-search",
+      "tags": [
+        "pinterest"
+      ],
+      "summary": "Search",
+      "description": "Search Pinterest",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Search query",
+          "example": "nasa"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/pinterest/user/boards",
+      "operationId": "v1-pinterest-user-boards",
+      "tags": [
+        "pinterest"
+      ],
+      "summary": "User Boards",
+      "description": "Get a user's boards",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Pinterest username, e.g. broadstbullycom, not a profile URL.",
+          "example": "nasa"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/pinterest/board",
+      "operationId": "v1-pinterest-board",
+      "tags": [
+        "pinterest"
+      ],
+      "summary": "Board",
+      "description": "Get pins from a Pinterest board. With trim=true, native save counts and keyword labels are retained when available.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The URL of the board to get",
+          "example": "https://www.pinterest.com/nasa/learn-with-nasa/"
+        },
+        {
+          "name": "trim",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "description": "Set true for a trimmed response."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "The cursor to get the next page of results"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitch/profile",
+      "operationId": "v1-twitch-profile",
+      "tags": [
+        "twitch"
+      ],
+      "summary": "Profile",
+      "description": "Get Twitch profile",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitch handle",
+          "example": "nasa"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitch/user/videos",
+      "operationId": "v1-twitch-user-videos",
+      "tags": [
+        "twitch"
+      ],
+      "summary": "User Videos",
+      "description": "Get Twitch user videos",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitch handle",
+          "example": "nasa"
+        },
+        {
+          "name": "filter_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Filter by",
+          "example": "ARCHIVE"
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Sort by",
+          "example": "VIEWS"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitch/user/schedule",
+      "operationId": "v1-twitch-user-schedule",
+      "tags": [
+        "twitch"
+      ],
+      "summary": "User Schedule",
+      "description": "Get Twitch user schedule",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitch handle",
+          "example": "nasa"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitch/clip",
+      "operationId": "v1-twitch-clip",
+      "tags": [
+        "twitch"
+      ],
+      "summary": "Clip",
+      "description": "Get Twitch clip details (1 credit). The answer is a bare JSON array with no envelope; the fetchproof-credits-charged and fetchproof-credits-remaining headers carry the credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Twitch clip URL",
+          "example": "https://www.twitch.tv/nasa/clip/IronicGrotesqueCaribouDxAbomb"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/apple-music/artist",
+      "operationId": "v1-apple-music-artist",
+      "tags": [
+        "apple-music"
+      ],
+      "summary": "Artist",
+      "description": "Provide one of: id, url. Get Apple Music artist",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music artist ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music artist URL. Provide id or url.",
+          "example": "https://music.apple.com/us/artist/the-beatles/136975"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/apple-music/album",
+      "operationId": "v1-apple-music-album",
+      "tags": [
+        "apple-music"
+      ],
+      "summary": "Album",
+      "description": "Provide one of: id, url. Get Apple Music album",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music album ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music album URL. Provide id or url.",
+          "example": "https://music.apple.com/us/album/abbey-road/1441164426"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/apple-music/track",
+      "operationId": "v1-apple-music-track",
+      "tags": [
+        "apple-music"
+      ],
+      "summary": "Track",
+      "description": "Provide one of: id, url. Get Apple Music track",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music song id. Some songs have standalone song URLs; for album tracks, use the url parameter."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Apple Music song URL or album track URL.",
+          "example": "https://music.apple.com/us/album/two-is-better-than-one/329757886?i=329757892"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/apple-music/search",
+      "operationId": "v1-apple-music-search",
+      "tags": [
+        "apple-music"
+      ],
+      "summary": "Search",
+      "description": "Search Apple Music",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "sections"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Search query",
+          "example": "The Beatles"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Result type to return. Use all, song, album, artist, playlist, station, music_video, or radio_episode.",
+          "example": "song"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/artist",
+      "operationId": "v1-spotify-artist",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Artist",
+      "description": "Provide one of: id, url. Get Spotify artist",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify artist ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify artist URL. Provide id or url.",
+          "example": "https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/track",
+      "operationId": "v1-spotify-track",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Track",
+      "description": "Provide one of: id, url. Get Spotify track",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify track ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify song URL. Provide id or url.",
+          "example": "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/album",
+      "operationId": "v1-spotify-album",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Album",
+      "description": "Provide one of: id, url. Get Spotify album",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify album ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify album URL. Provide id or url.",
+          "example": "https://open.spotify.com/album/2QJmrSgbdM35R67eoGQo4j"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/playlist",
+      "operationId": "v1-spotify-playlist",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Playlist",
+      "description": "Provide one of: id, url. Get a Spotify playlist and its tracks",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify playlist ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify playlist URL. Provide id or url.",
+          "example": "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor returned by the previous response. Omit it for the first page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/podcast",
+      "operationId": "v1-spotify-podcast",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Podcast",
+      "description": "Provide one of: id, url. Get Spotify podcast",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify podcast ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify podcast URL. Provide id or url.",
+          "example": "https://open.spotify.com/show/4rOoJ6Egrf8K2IrywzwOMk"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/spotify/podcast/episodes",
+      "operationId": "v1-spotify-podcast-episodes",
+      "tags": [
+        "spotify"
+      ],
+      "summary": "Podcast Episodes",
+      "description": "Provide one of: id, url. Get Spotify podcast episodes",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify podcast ID. Provide id or url."
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Spotify podcast URL. Provide id or url.",
+          "example": "https://open.spotify.com/show/4rOoJ6Egrf8K2IrywzwOMk"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Cursor returned by the previous response. Omit for the first page."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/soundcloud/artist",
+      "operationId": "v1-soundcloud-artist",
+      "tags": [
+        "soundcloud"
+      ],
+      "summary": "Artist",
+      "description": "Provide one of: handle, url. Get SoundCloud artist details and follower counts by handle or URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "SoundCloud artist handle. Provide handle or url.",
+          "example": "forss"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "SoundCloud artist URL. Provide url or handle."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/soundcloud/artist/tracks",
+      "operationId": "v1-soundcloud-artist-tracks",
+      "tags": [
+        "soundcloud"
+      ],
+      "summary": "Artist Tracks",
+      "description": "Provide one of: handle, url. Gets tracks/songs for a SoundCloud artist by handle or URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "SoundCloud artist handle. Provide handle or url.",
+          "example": "forss"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "SoundCloud artist tracks URL. Provide url or handle."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor to get more tracks. Get 'cursor' from previous response."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/soundcloud/track",
+      "operationId": "v1-soundcloud-track",
+      "tags": [
+        "soundcloud"
+      ],
+      "summary": "Track",
+      "description": "Gets detailed information about a SoundCloud track/song by URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "SoundCloud track URL.",
+          "example": "https://soundcloud.com/forss/flickermood"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/kwai/profile",
+      "operationId": "v1-kwai-profile",
+      "tags": [
+        "kwai"
+      ],
+      "summary": "Profile",
+      "description": "Provide one of: handle, url. Get public Kwai profile info from a handle or profile URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Kwai profile handle. Use this or url.",
+          "example": "ZoZoo77"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Kwai profile URL. Use this or handle."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/kwai/user/posts",
+      "operationId": "v1-kwai-user-posts",
+      "tags": [
+        "kwai"
+      ],
+      "summary": "User Posts",
+      "description": "Provide one of: handle, url. Get public posts from a Kwai handle or profile URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "posts"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Kwai profile handle. Use this or url.",
+          "example": "ZoZoo77"
+        },
+        {
+          "name": "url",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Kwai profile URL. Use this or handle."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "description": "Number of posts to return, max 50"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor from the previous response for the next page"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/snapchat/profile",
+      "operationId": "v1-snapchat-profile",
+      "tags": [
+        "snapchat"
+      ],
+      "summary": "User Profile",
+      "description": "Get a public Snapchat profile (1 credit): name, bio, subscriber count, related accounts and the profile's Spotlight videos with views, shares and comments. Personal accounts return only username, display name and snapcode. Highlights are empty: the public page no longer embeds them.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Snapchat username",
+          "example": "teamsnapchat"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/telegram/channel",
+      "operationId": "v1-telegram-channel",
+      "tags": [
+        "telegram"
+      ],
+      "summary": "Channel Details",
+      "description": "Provide one of: handle, url. Get public Telegram channel or group details from its web preview.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Public Telegram handle, @handle, or t.me channel URL.",
+          "example": "telegram"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/telegram/channel/posts",
+      "operationId": "v1-telegram-channel-posts",
+      "tags": [
+        "telegram"
+      ],
+      "summary": "Channel Posts",
+      "description": "Provide one of: handle, url. Get one page of recent public posts from a Telegram channel or group.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Public Telegram handle, @handle, or t.me channel URL.",
+          "example": "telegram"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Numeric cursor returned by the previous page. Omit it for the latest posts."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/telegram/post",
+      "operationId": "v1-telegram-post",
+      "tags": [
+        "telegram"
+      ],
+      "summary": "Post Details",
+      "description": "Get one public Telegram post by URL.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Public Telegram post URL.",
+          "example": "https://t.me/telegram/441"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/profile",
+      "operationId": "v1-cosmos-profile",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "Profile",
+      "description": "Get a public Cosmos profile with bio, links, and follower counts.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Cosmos username without a profile URL.",
+          "example": "cosmos"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/user/posts",
+      "operationId": "v1-cosmos-user-posts",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "User Posts",
+      "description": "Get the public posts saved to a Cosmos user profile.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "items"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Cosmos username without a profile URL.",
+          "example": "cosmos"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/user/clusters",
+      "operationId": "v1-cosmos-user-clusters",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "User Collections",
+      "description": "Get the public collections owned by a Cosmos user.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "items"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Cosmos username without a profile URL.",
+          "example": "cosmos"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/cluster",
+      "operationId": "v1-cosmos-cluster",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "Collection",
+      "description": "Get a public Cosmos collection with its owner, description, cover, counts, and public subcollections.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Public Cosmos collection URL.",
+          "example": "https://www.cosmos.so/cosmos/gift-selects"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/cluster/posts",
+      "operationId": "v1-cosmos-cluster-posts",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "Collection Posts",
+      "description": "Get public posts saved to a Cosmos collection. Supports cursor pagination.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "items"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Public Cosmos collection URL.",
+          "example": "https://www.cosmos.so/cosmos/gift-selects"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/cosmos/search",
+      "operationId": "v1-cosmos-search",
+      "tags": [
+        "cosmos"
+      ],
+      "summary": "Search",
+      "description": "Search public Cosmos posts by keyword. Cosmos may return related posts even when there is no exact keyword match.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "items"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Search text.",
+          "example": "nasa"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/linktree",
+      "operationId": "v1-linktree",
+      "tags": [
+        "linktree"
+      ],
+      "summary": "Linktree page",
+      "description": "Linktree page",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "URL to Linktree page",
+          "example": "https://linktr.ee/linktree"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Use a cached response this old or newer for 0 credits. If none is available, fetch live at the endpoint’s normal price."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/account/credit-balance",
+      "operationId": "v1-account-credit-balance",
+      "tags": [
+        "account"
+      ],
+      "summary": "Get credit balance",
+      "description": "Call it with no arguments. Get your remaining credit balance.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": []
+    },
+    {
+      "method": "get",
+      "path": "/v1/account/get-api-usage",
+      "operationId": "v1-account-get-api-usage",
+      "tags": [
+        "account"
+      ],
+      "summary": "Get request history",
+      "description": "Call it with no arguments for the recent page. endpoint, statusCode and page are optional filters. View your recent API request history",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "endpoint",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Filter by endpoint name (partial match)"
+        },
+        {
+          "name": "statusCode",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Filter by HTTP status code"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Page number for pagination (max 100)"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/account/get-daily-usage-count",
+      "operationId": "v1-account-get-daily-usage-count",
+      "tags": [
+        "account"
+      ],
+      "summary": "Get daily usage",
+      "description": "Call it with no arguments. Each row is one day. Get your daily credit and request counts",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": []
+    },
+    {
+      "method": "get",
+      "path": "/v1/account/get-most-used-routes",
+      "operationId": "v1-account-get-most-used-routes",
+      "tags": [
+        "account"
+      ],
+      "summary": "Get most used routes",
+      "description": "Call it with no arguments for the default window. start_time and end_time are optional ISO-8601 bounds. See which endpoints you use the most",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "start_time",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Start of time range (ISO 8601 format)"
+        },
+        {
+          "name": "end_time",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "End of time range (ISO 8601 format)"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/mastodon/profile",
+      "operationId": "v1-mastodon-profile",
+      "tags": [
+        "mastodon"
+      ],
+      "summary": "Look up a fediverse account",
+      "description": "Looks up acct (user@instance) on that instance's public API. No application token.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "acct",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Account in the form user@instance.",
+          "example": "Gargron@mastodon.social"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/mastodon/account/statuses",
+      "operationId": "v1-mastodon-account-statuses",
+      "tags": [
+        "mastodon"
+      ],
+      "summary": "List an account's statuses",
+      "description": "Provide one of: acct, id. One page of public statuses. Pass acct, or id together with instance. max_id is the older-than cursor. An empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "statuses"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "acct",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Account in the form user@instance.",
+          "example": "Gargron@mastodon.social"
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Account id on the instance, used with instance instead of acct."
+        },
+        {
+          "name": "instance",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Instance hostname. Required when id is used instead of acct."
+        },
+        {
+          "name": "max_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Return statuses older than this id."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/mastodon/status",
+      "operationId": "v1-mastodon-status",
+      "tags": [
+        "mastodon"
+      ],
+      "summary": "Fetch one status",
+      "description": "One public status by id on instance. HTML is returned as content and as text with tags removed.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Status id on the instance.",
+          "example": "117617184213788653"
+        },
+        {
+          "name": "instance",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Instance hostname.",
+          "example": "mastodon.social"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/mastodon/hashtag",
+      "operationId": "v1-mastodon-hashtag",
+      "tags": [
+        "mastodon"
+      ],
+      "summary": "Hashtag timeline",
+      "description": "One page of the public tag timeline on instance. An empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "statuses"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "hashtag",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Tag name, with or without a leading #.",
+          "example": "photography"
+        },
+        {
+          "name": "instance",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Instance hostname.",
+          "example": "mastodon.social"
+        },
+        {
+          "name": "max_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Return statuses older than this id."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/jobs/{id}",
+      "operationId": "v1-jobs-{id}",
+      "tags": [
+        "jobs"
+      ],
+      "summary": "Get or poll a job",
+      "description": "Poll a job created by adding async=true, or the header Prefer: respond-async, to any GET /v1 request. A queued job has not been charged. A finished job's result is the operation body, charged once through the normal ledger. Failed, empty, expired and cancelled jobs cost 0.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 0,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "Job id from the 202 response. Pass that id and nothing else.",
+          "example": "00000000-0000-4000-8000-000000000000"
+        }
+      ]
+    },
+    {
+      "method": "post",
+      "path": "/v1/jobs/{id}/cancel",
+      "operationId": "v1-jobs-{id}-cancel",
+      "tags": [
+        "jobs"
+      ],
+      "summary": "Cancel a job",
+      "description": "Cancels a job that is still queued. A running, finished, expired or already cancelled job is unchanged. Cancelling costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 0,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "Job id from the 202 response. Pass that id and nothing else.",
+          "example": "00000000-0000-4000-8000-000000000000"
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/bilibili/user",
+      "operationId": "v1-bilibili-user",
+      "tags": [
+        "bilibili"
+      ],
+      "summary": "User profile",
+      "description": "Public profile card for a numeric user id.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "mid",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Numeric user id.",
+          "example": "2"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/substack/posts",
+      "operationId": "v1-substack-posts",
+      "tags": [
+        "substack"
+      ],
+      "summary": "Publication posts",
+      "description": "Latest public posts on a publication. Pass a hostname, or a name that lives at name.substack.com. An empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "posts"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "publication",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Publication hostname.",
+          "example": "astralcodexten.substack.com"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/substack/post",
+      "operationId": "v1-substack-post",
+      "tags": [
+        "substack"
+      ],
+      "summary": "Post",
+      "description": "One public post by publication and slug.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "publication",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Publication hostname.",
+          "example": "astralcodexten.substack.com"
+        },
+        {
+          "name": "slug",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Post slug.",
+          "example": "vote-in-the-2026-book-review-contest"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/medium/user/posts",
+      "operationId": "v1-medium-user-posts",
+      "tags": [
+        "medium"
+      ],
+      "summary": "User posts",
+      "description": "Posts in an author's public feed. An empty feed costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "posts"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "username",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Medium username, without @.",
+          "example": "ev"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/medium/article",
+      "operationId": "v1-medium-article",
+      "tags": [
+        "medium"
+      ],
+      "summary": "Article",
+      "description": "One article from the author's public feed, including its text. An article that has left the feed is not found.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "username",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Medium username, without @.",
+          "example": "ev"
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Article id from the feed.",
+          "example": "0126fa5c6ce8"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/twitch/user/clips",
+      "operationId": "v1-twitch-user-clips",
+      "tags": [
+        "twitch"
+      ],
+      "summary": "Channel clips",
+      "description": "One page of a channel's public clips. An empty page costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "clips"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "handle",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Channel login.",
+          "example": "nasa"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Cursor from the previous page."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/races/search",
+      "operationId": "v1-races-search",
+      "tags": [
+        "races"
+      ],
+      "summary": "Find a race",
+      "description": "Searches finished races by name on one timing platform. Each hit carries the ids /v1/races/events and /v1/races/results take: athlinks hits list their recent editions (event_id), runsignup hits give a race_id, raceroster hits give a numeric event_id. An empty list costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "events"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "platform",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Timing platform: runsignup, athlinks (also carries ChronoTrack events) or raceroster.",
+          "example": "athlinks"
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Race name to search for.",
+          "example": "chicago marathon"
+        },
+        {
+          "name": "year",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Only races held in this four-digit year.",
+          "example": "2025"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/races/events",
+      "operationId": "v1-races-events",
+      "tags": [
+        "races"
+      ],
+      "summary": "List a race's events",
+      "description": "Lists the distances of a race and the ids /v1/races/results needs. runsignup: pass race_id; every finished event of the race is listed, each with its event_id. athlinks: pass event_id (an edition from /v1/races/search); its courses are listed with course_id. raceroster: pass event_id (a results code or a numeric event id); its races are listed with course_id. An empty list costs 0 credits.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": [
+          {
+            "when": {
+              "empty": "events"
+            },
+            "cost": 0
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "name": "platform",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Timing platform: runsignup, athlinks (also carries ChronoTrack events) or raceroster.",
+          "example": "athlinks"
+        },
+        {
+          "name": "race_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "runsignup only: the RunSignup race id."
+        },
+        {
+          "name": "event_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "athlinks and raceroster: the event id.",
+          "example": "1131559"
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    },
+    {
+      "method": "get",
+      "path": "/v1/races/results",
+      "operationId": "v1-races-results",
+      "tags": [
+        "races"
+      ],
+      "summary": "Result by bib",
+      "description": "One runner's official result, by bib number, in one schema for all three platforms: names, chip and gun time, pace, overall, gender and age-group place, and splits where the platform publishes them. runsignup needs race_id and event_id. athlinks needs event_id and may take course_id (without it the event's courses are tried, largest first). raceroster needs event_id and may take course_id when a bib is used in more than one race. A bib that is not in the results costs 0 credits. Only what the platform's public results page shows is returned, one bib per call. A runner the platform shows as Anonymous, or whose personal data is hidden, is not named.",
+      "creditCost": {
+        "unit": "credits",
+        "default": 1,
+        "rules": []
+      },
+      "parameters": [
+        {
+          "name": "platform",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "Timing platform: runsignup, athlinks (also carries ChronoTrack events) or raceroster.",
+          "example": "athlinks"
+        },
+        {
+          "name": "event_id",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The event or edition id from /v1/races/search or /v1/races/events.",
+          "example": "1131559"
+        },
+        {
+          "name": "bib",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "description": "The runner's bib number.",
+          "example": "6"
+        },
+        {
+          "name": "race_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "runsignup only: the RunSignup race id."
+        },
+        {
+          "name": "course_id",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "athlinks and raceroster: the course or race within the event, from /v1/races/events."
+        },
+        {
+          "name": "cache_max_age",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "description": "Serve a cached response when it is newer than this. A cache hit costs 0 credits."
+        }
+      ]
+    }
+  ]
+}
