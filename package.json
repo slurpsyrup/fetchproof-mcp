@@ -1,6 +1,7 @@
 {
   "name": "@fetchproof/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "mcpName": "com.fetchproof/mcp",
   "private": false,
   "type": "module",
   "license": "MIT",

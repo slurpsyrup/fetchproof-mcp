@@ -1,5 +1,7 @@
 # @fetchproof/mcp
 
+[![Fetchproof MCP server](https://glama.ai/mcp/servers/slurpsyrup/fetchproof-mcp/badges/score.svg)](https://glama.ai/mcp/servers/slurpsyrup/fetchproof-mcp)
+
 stdio [Model Context Protocol](https://modelcontextprotocol.io) server for the [Fetchproof](https://fetchproof.com) public-data API. Each published operation is one tool — TikTok, Instagram, Facebook (including the Ad Library), YouTube transcripts, official race results by bib, and the rest of the catalog.
 
 You bring your own Fetchproof API key (`FETCHPROOF_API_KEY`). No key is embedded in this package. `initialize` and `tools/list` work without a key so clients and directories can inspect the tool list.

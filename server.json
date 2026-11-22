@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.fetchproof/mcp",
+  "title": "Fetchproof",
+  "description": "Fetchproof MCP server for public TikTok, Instagram, Facebook, YouTube, and race-results data.",
+  "repository": {
+    "url": "https://github.com/slurpsyrup/fetchproof-mcp",
+    "source": "github"
+  },
+  "version": "0.1.1",
+  "websiteUrl": "https://fetchproof.com",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@fetchproof/mcp",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "API key from https://app.fetchproof.com. Needed for tools/call; initialize and tools/list work without it.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "FETCHPROOF_API_KEY"
+        }
+      ]
+    }
+  ]
+}
