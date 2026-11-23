@@ -7,7 +7,7 @@
   "license": "MIT",
   "description": "stdio MCP server for the Fetchproof public-data API. One tool per published operation (TikTok, Instagram, Facebook, YouTube, race results by bib, and the rest of the catalog). Users bring their own FETCHPROOF_API_KEY.",
   "bin": {
-    "fetchproof-mcp": "./bin.js"
+    "fetchproof-mcp": "bin.js"
   },
   "files": [
     "bin.js",
